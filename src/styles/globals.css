@@ -1,0 +1,34 @@
+@import './tokens.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* iPad PWA에서 바운스 스크롤 방지 */
+    overscroll-behavior: none;
+    overflow: hidden;
+    height: 100dvh;
+  }
+
+  /* PWA 풀스크린에서 선택 하이라이트 제거 */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+}
+
+/* 스크롤바 숨기기 (프레임/필터 가로 스크롤) */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -1,0 +1,25 @@
+:root {
+  /* 색상 — 테마 변경 시 이 부분만 수정 */
+  --color-bg: #fafaf7;
+  --color-fg: #1a1a1a;
+  --color-accent: #1a1a1a;
+  --color-muted: #a8a8a3;
+  --color-border: #e8e6e0;
+  --color-subtle: #f0ede7;
+  --color-frame: #1a1a1a;
+  --color-overlay: rgba(26, 26, 26, 0.4);
+
+  /* 타이포 — 모던 세리프 + 산세리프 조합 */
+  --font-display: 'Fraunces', 'Playfair Display', serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+
+  /* 라운드 — 부드러운 무드 */
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+  --radius-full: 9999px;
+
+  /* 트랜지션 */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration: 400ms;
+}
