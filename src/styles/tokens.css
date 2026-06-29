@@ -1,17 +1,18 @@
 :root {
-  /* 색상 — 테마 변경 시 이 부분만 수정 */
-  --color-bg: #fafaf7;
-  --color-fg: #1a1a1a;
-  --color-accent: #1a1a1a;
-  --color-muted: #a8a8a3;
-  --color-border: #e8e6e0;
-  --color-subtle: #f0ede7;
-  --color-frame: #1a1a1a;
-  --color-overlay: rgba(26, 26, 26, 0.4);
+  /* 색상 — 테마 변경 시 이 부분만 수정
+     테마: 말차 크림 (Matcha Cream) — 밝고 푸릇한 프레시 그린 무드 */
+  --color-bg: #f2f5ea;        /* 연두빛 크림 배경 */
+  --color-fg: #20301f;        /* 딥 포레스트 — 본문/타이틀 */
+  --color-accent: #5a8f4e;    /* 프레시 그린 — 버튼/포인트 */
+  --color-muted: #8a9b7e;     /* 세이지 — 보조 텍스트 */
+  --color-border: #dde3d1;    /* 연한 세이지 보더 */
+  --color-subtle: #e7ecda;    /* 살짝 진한 크림 — 카드/칩 배경 */
+  --color-frame: #20301f;     /* 포토 프레임 기본색 */
+  --color-overlay: rgba(32, 48, 31, 0.4);
 
-  /* 타이포 — 모던 세리프 + 산세리프 조합 */
-  --font-display: 'Fraunces', 'Playfair Display', serif;
-  --font-body: 'Inter', -apple-system, sans-serif;
+  /* 타이포 — 모던 한글 세리프 + 산세리프 조합 */
+  --font-display: 'Hahmlet', 'Nanum Myeongjo', serif;
+  --font-body: 'Pretendard', -apple-system, 'Apple SD Gothic Neo', sans-serif;
 
   /* 라운드 — 부드러운 무드 */
   --radius-sm: 10px;

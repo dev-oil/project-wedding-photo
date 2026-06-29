@@ -34,7 +34,7 @@ export default function HomePage() {
       </p>
 
       {/* 커플 이름 */}
-      <h1 className="text-center font-display text-6xl font-light leading-tight tracking-tight text-fg md:text-7xl">
+      <h1 className="text-center font-display text-7xl font-semibold leading-[1.05] tracking-tight text-fg md:text-8xl">
         {coupleNames}
       </h1>
 

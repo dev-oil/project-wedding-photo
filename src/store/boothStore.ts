@@ -8,7 +8,7 @@ import type { BoothState } from '@/types';
 
 export const useBoothStore = create<BoothState>((set) => ({
   step: 'select',
-  selectedFrame: 'classic',
+  selectedFrame: 'cream',
   selectedFilter: 'none',
   photos: [],
   composedImage: null,
@@ -22,7 +22,7 @@ export const useBoothStore = create<BoothState>((set) => ({
   reset: () =>
     set({
       step: 'select',
-      selectedFrame: 'classic',
+      selectedFrame: 'cream',
       selectedFilter: 'none',
       photos: [],
       composedImage: null,

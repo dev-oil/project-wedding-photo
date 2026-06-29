@@ -14,7 +14,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-fg text-bg hover:opacity-90 active:scale-[0.98]',
+    'bg-accent text-white hover:opacity-90 active:scale-[0.98]',
   secondary:
     'bg-bg text-fg border border-border hover:border-muted active:scale-[0.98]',
   ghost:
