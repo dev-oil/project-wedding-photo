@@ -53,7 +53,6 @@ export type BoothState = {
 /** 카메라 훅 반환 타입 */
 export type UseCameraReturn = {
   videoRef: React.RefObject<HTMLVideoElement | null>;
-  stream: MediaStream | null;
   isReady: boolean;
   error: string | null;
   capture: (filterCss: string) => HTMLCanvasElement | null;

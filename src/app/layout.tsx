@@ -34,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        {/* 디스플레이: Hahmlet (모던 한글 세리프, Google Fonts) */}
+        {/* 디스플레이: Hahmlet (한글 세리프) + Bebas Neue (포스터 콘덴스드) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -42,7 +42,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@300;400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Hahmlet:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
         />
         {/* 본문: Pretendard (모던 한글 산세, 공식 CDN) */}

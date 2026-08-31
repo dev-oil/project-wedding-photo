@@ -6,13 +6,15 @@
 
 import { useEffect, useState } from 'react';
 
+/** 카운트다운 시작 숫자 */
+const COUNTDOWN_FROM = 3;
+
 type CountdownProps = {
-  from?: number;
   onComplete: () => void;
 };
 
-export function Countdown({ from = 3, onComplete }: CountdownProps) {
-  const [count, setCount] = useState(from);
+export function Countdown({ onComplete }: CountdownProps) {
+  const [count, setCount] = useState(COUNTDOWN_FROM);
 
   useEffect(() => {
     if (count <= 0) {

@@ -1,11 +1,13 @@
 /**
  * 카메라 접근 훅
  * getUserMedia를 감싸서 비디오 스트림, 캡처, 에러 처리를 제공합니다.
+ * NEXT_PUBLIC_MOCK_CAMERA=true 이면 카메라 대신 Canvas 목 스트림을 씁니다.
  */
 'use client';
 
 import { useRef, useState, useCallback, useEffect } from 'react';
 import type { UseCameraReturn } from '@/types';
+import { createMockStream, isMockCamera } from './mockCamera';
 
 const CAMERA_CONSTRAINTS: MediaStreamConstraints = {
   video: {
@@ -35,8 +37,9 @@ export function useCamera(): UseCameraReturn {
 
     async function init() {
       try {
-        const mediaStream =
-          await navigator.mediaDevices.getUserMedia(CAMERA_CONSTRAINTS);
+        const mediaStream = isMockCamera
+          ? createMockStream()
+          : await navigator.mediaDevices.getUserMedia(CAMERA_CONSTRAINTS);
 
         if (cancelled) {
           mediaStream.getTracks().forEach((t) => t.stop());
@@ -113,5 +116,5 @@ export function useCamera(): UseCameraReturn {
     [isReady],
   );
 
-  return { videoRef, stream, isReady, error, capture, cleanup };
+  return { videoRef, isReady, error, capture, cleanup };
 }

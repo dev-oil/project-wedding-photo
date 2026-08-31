@@ -13,8 +13,8 @@ const config: Config = {
         muted: "var(--color-muted)",
         border: "var(--color-border)",
         subtle: "var(--color-subtle)",
-        frame: "var(--color-frame)",
         overlay: "var(--color-overlay)",
+        forest: "var(--color-forest)",
       },
       fontFamily: {
         display: "var(--font-display)",
@@ -22,15 +22,11 @@ const config: Config = {
       },
       borderRadius: {
         sm: "var(--radius-sm)",
-        md: "var(--radius-md)",
         lg: "var(--radius-lg)",
         full: "var(--radius-full)",
       },
       transitionTimingFunction: {
         smooth: "var(--ease-out)",
-      },
-      transitionDuration: {
-        default: "var(--duration)",
       },
       keyframes: {
         countdown: {

@@ -7,20 +7,22 @@
   --color-muted: #8a9b7e;     /* 세이지 — 보조 텍스트 */
   --color-border: #dde3d1;    /* 연한 세이지 보더 */
   --color-subtle: #e7ecda;    /* 살짝 진한 크림 — 카드/칩 배경 */
-  --color-frame: #20301f;     /* 포토 프레임 기본색 */
   --color-overlay: rgba(32, 48, 31, 0.4);
+
+  /* 포스터 팔레트 — 시작 화면(에디토리얼 포스터)에서 사용 */
+  --color-ink: #17181a;       /* 잉크 블랙 — 초대형 타이포 */
+  --color-forest: #1d4634;    /* 딥 포레스트 — 뱃지/CTA/라인 */
 
   /* 타이포 — 모던 한글 세리프 + 산세리프 조합 */
   --font-display: 'Hahmlet', 'Nanum Myeongjo', serif;
   --font-body: 'Pretendard', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  --font-poster: 'Bebas Neue', 'Arial Narrow', 'Pretendard', sans-serif;
 
   /* 라운드 — 부드러운 무드 */
   --radius-sm: 10px;
-  --radius-md: 18px;
   --radius-lg: 28px;
   --radius-full: 9999px;
 
   /* 트랜지션 */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --duration: 400ms;
 }

@@ -4,9 +4,9 @@
   "description": "결혼식 인생네컷 포토부스",
   "start_url": "/",
   "display": "fullscreen",
-  "orientation": "landscape",
-  "background_color": "#fafaf7",
-  "theme_color": "#fafaf7",
+  "orientation": "portrait",
+  "background_color": "#f2f5ea",
+  "theme_color": "#f2f5ea",
   "icons": [
     {
       "src": "/icon-192.png",

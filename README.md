@@ -66,10 +66,11 @@ AND created_at < NOW() - INTERVAL '24 hours';
 
 ```css
 :root {
-  --color-bg: #fafaf7;    /* 배경색 */
-  --color-fg: #1a1a1a;    /* 글자색 */
-  --color-muted: #a8a8a3; /* 보조 텍스트 */
-  --color-border: #e8e6e0;/* 보더 */
+  --color-bg: #f2f5ea;     /* 배경색 */
+  --color-fg: #20301f;     /* 글자색 */
+  --color-accent: #5a8f4e; /* 포인트 */
+  --color-muted: #8a9b7e;  /* 보조 텍스트 */
+  --color-border: #dde3d1; /* 보더 */
   /* ... */
 }
 ```

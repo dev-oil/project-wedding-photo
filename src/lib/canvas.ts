@@ -29,8 +29,8 @@ export async function composePhotoStrip(
   const { padding, gap } = frame;
   const contentWidth = CANVAS_WIDTH - padding.left - padding.right;
   const totalGap = gap * 3;
-  const footerSpace = frame.footerText ? 0 : 0; // 이미 padding.bottom에 포함
-  const contentHeight = CANVAS_HEIGHT - padding.top - padding.bottom - footerSpace;
+  // 하단 텍스트 공간은 padding.bottom에 이미 포함되어 있음
+  const contentHeight = CANVAS_HEIGHT - padding.top - padding.bottom;
   const photoHeight = (contentHeight - totalGap) / 4;
   const photoWidth = contentWidth;
 
@@ -111,7 +111,7 @@ function drawFooterText(ctx: CanvasRenderingContext2D, frame: Frame) {
 
   ctx.save();
   ctx.fillStyle = frame.textColor;
-  ctx.font = '32px "Fraunces", serif';
+  ctx.font = '32px "Pretendard", -apple-system, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
 
