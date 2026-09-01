@@ -16,20 +16,22 @@ export type Filter = {
   postProcess?: (ctx: CanvasRenderingContext2D, width: number, height: number) => void;
 };
 
-/** 4컷 프레임 레이아웃 정의 */
+/**
+ * 4컷 프레임 색 구성 정의
+ * 슬롯 배치(1080×1920, 2×2 그리드)는 lib/canvas.ts의 고정 레이아웃을 따르고,
+ * 프레임은 색 조합만 바꿉니다.
+ */
 export type Frame = {
   id: string;
   label: string;
-  /** 캔버스 1200x1800 기준 패딩 */
-  padding: { top: number; right: number; bottom: number; left: number };
-  /** 사진 사이 간격 */
-  gap: number;
   /** 프레임 배경색 */
   background: string;
-  /** 하단 텍스트 색상 */
+  /** 하단 푸터 텍스트 색상 */
   textColor: string;
-  /** 하단 텍스트 (예: "신랑 ♥ 신부  2026.05.20") */
+  /** 푸터 첫 줄 — 커플 이름 (예: "신랑 ♥ 신부") */
   footerText?: string;
+  /** 푸터 둘째 줄 — 결혼식 날짜 (예: "2026.05.20") */
+  footerDate?: string;
   /** 사진 테두리 색상 */
   borderColor?: string;
 };

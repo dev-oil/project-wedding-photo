@@ -19,28 +19,23 @@ export function FrameSelector({ selected, onSelect }: FrameSelectorProps) {
         <button
           key={frame.id}
           onClick={() => onSelect(frame.id)}
-          className={`flex flex-shrink-0 items-center gap-3 rounded-2xl border px-4 py-3 transition-all duration-300 ease-smooth ${
+          className={`flex flex-shrink-0 items-center gap-3 rounded-[14px] border-[1.5px] px-4 py-3 transition-all duration-300 ease-smooth ${
             selected === frame.id
-              ? 'border-fg shadow-sm'
+              ? 'border-forest shadow-sm'
               : 'border-border hover:border-muted'
           }`}
         >
-          {/* 프레임 색상 미리보기 */}
+          {/* 프레임 색상 미리보기 — 실제 합성과 같은 2×2 + 하단 푸터 여백 */}
           <div
-            className="h-10 w-7 rounded-sm border border-border"
+            className="h-11 w-[26px] rounded-[3px] border border-border"
             style={{ background: frame.background }}
           >
-            {/* 작은 4컷 레이아웃 표시 */}
-            <div className="flex h-full flex-col justify-evenly px-[3px] py-[3px]">
+            <div className="grid h-[76%] grid-cols-2 gap-[2px] p-[3px]">
               {[0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="w-full rounded-[1px]"
-                  style={{
-                    height: '18%',
-                    background: frame.textColor,
-                    opacity: 0.2,
-                  }}
+                  className="rounded-[1px]"
+                  style={{ background: frame.textColor, opacity: 0.2 }}
                 />
               ))}
             </div>
