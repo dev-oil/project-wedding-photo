@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["dom", "dom.iterable", "esnext", "webworker"],
+    "types": ["node", "react", "react-dom", "@serwist/next/typings"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

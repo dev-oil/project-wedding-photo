@@ -6,21 +6,21 @@
 ## 설치 및 실행
 
 ```bash
-# Node.js 18+ 필요
-nvm use 22
+# Node.js 24 (LTS) + pnpm 필요 — .nvmrc 기준
+nvm use
 
 # 의존성 설치
-npm install
+pnpm install
 
 # 환경변수 설정
 cp .env.example .env.local
 # .env.local 파일을 열어 Supabase 정보와 커플 정보를 입력하세요
 
 # 개발 서버
-npm run dev
+pnpm dev
 
 # 프로덕션 빌드
-npm run build && npm start
+pnpm build && pnpm start
 ```
 
 ## 환경변수
@@ -93,14 +93,12 @@ AND created_at < NOW() - INTERVAL '24 hours';
 
 ## 새 프레임 추가
 
-`src/lib/frames.ts`에 객체 하나만 추가:
+`src/lib/frames.ts`에 객체 하나만 추가 (배치는 2×2 고정 레이아웃 공용, 색 구성만 정의):
 
 ```ts
 {
   id: 'pink',
   label: '핑크',
-  padding: { top: 60, right: 60, bottom: 140, left: 60 },
-  gap: 24,
   background: '#ffe4e9',
   textColor: '#8b4557',
   footerText: footer,
@@ -109,9 +107,10 @@ AND created_at < NOW() - INTERVAL '24 hours';
 
 ## 기술 스택
 
+- Node.js 24 (LTS) + pnpm
 - Next.js 14 (App Router) + TypeScript
 - Tailwind CSS (CSS 변수 기반 토큰)
 - Zustand (상태 관리)
 - Supabase Storage (이미지 업로드)
 - qrcode.react (QR 생성)
-- next-pwa (PWA)
+- Serwist (PWA 서비스 워커 — `src/app/sw.ts`)
