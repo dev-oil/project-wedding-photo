@@ -18,10 +18,10 @@ export function FilterSelector({ selected, onSelect }: FilterSelectorProps) {
         <button
           key={filter.id}
           onClick={() => onSelect(filter.id)}
-          className={`flex-shrink-0 rounded-full border px-5 py-3 font-body text-sm transition-all duration-300 ease-smooth ${
+          className={`flex-shrink-0 rounded-full border-[1.5px] px-5 py-3 font-body text-sm font-medium transition-all duration-300 ease-smooth ${
             selected === filter.id
-              ? 'border-fg bg-fg text-bg'
-              : 'border-border bg-bg text-fg hover:border-muted'
+              ? 'border-forest bg-forest text-bg'
+              : 'border-border bg-transparent text-fg hover:border-muted'
           }`}
         >
           {filter.label}

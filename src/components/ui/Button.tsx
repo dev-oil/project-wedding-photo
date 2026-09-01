@@ -14,11 +14,11 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-accent text-white hover:opacity-90 active:scale-[0.98]',
+    'bg-forest text-bg active:scale-[0.985]',
   secondary:
-    'bg-bg text-fg border border-border hover:border-muted active:scale-[0.98]',
+    'border-[1.5px] border-forest bg-transparent text-forest active:scale-[0.985]',
   ghost:
-    'bg-transparent text-muted hover:text-fg active:scale-[0.98]',
+    'bg-transparent text-fg/45 hover:text-fg active:scale-[0.985]',
 };
 
 export function Button({
@@ -30,9 +30,9 @@ export function Button({
   return (
     <button
       className={`
-        min-h-[60px] rounded-full px-8 py-4 font-body text-base
+        min-h-[56px] rounded-[14px] px-8 py-3 font-body text-base font-semibold
         transition-all duration-300 ease-smooth
-        disabled:pointer-events-none disabled:opacity-50
+        disabled:pointer-events-none disabled:opacity-40
         ${variantStyles[variant]}
         ${className}
       `}
