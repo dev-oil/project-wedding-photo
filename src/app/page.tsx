@@ -3,24 +3,17 @@
  * 에디토리얼 포스터 레이아웃 — 초대형 타이포(PHOTO / BOOTH) 위에
  * 그린 티켓 · 모노그램 · 스티커를 얹은 구성입니다.
  *
- * 레이아웃 규칙
- * - 세로 한 화면 고정(스크롤 없음), 최대 폭은 iPad 기준 820px.
- * - 모든 치수는 스케일 단위 --u(= min(1vw, 8.2px))에 비례 → 폰~아이패드까지 같은 비율.
+ * 레이아웃 규칙 — components/layout/PosterShell 공용 셸 사용.
+ * 모든 치수는 스케일 단위 --u(= min(1vw, 8.2px))에 비례 → 폰~아이패드까지 같은 비율.
  */
 'use client';
 
 import { useRouter } from 'next/navigation';
-import type { CSSProperties, ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
+import { PosterShell, PosterHeader } from '@/components/layout/PosterShell';
+import { useFadeIn } from '@/hooks/useFadeIn';
 
 const coupleNames = process.env.NEXT_PUBLIC_COUPLE_NAMES ?? '신랑 ♥ 신부';
-
-/** 포스터 스케일 단위 — 820px(아이패드 폭)에서 상한 */
-const scaleStyle = {
-  '--u': 'min(1vw, 8.2px)',
-  paddingTop: 'max(calc(var(--u) * 4), env(safe-area-inset-top))',
-  paddingBottom: 'max(calc(var(--u) * 4), env(safe-area-inset-bottom))',
-} as CSSProperties;
 
 /** 4각 별 — 포스터 곳곳의 포인트 마크 */
 function Sparkle({ className = '' }: { className?: string }) {
@@ -69,6 +62,8 @@ function SpinRing({ className = '' }: { className?: string }) {
  * → 기기 폭과 무관하게 좌우가 꽉 차고, 굵기는 그대로인 채 폭만 좁아진다(초콘덴스드).
  * viewBox 높이 374 = fontSize 520 × 캡하이트 비율 0.72.
  * fontSize를 자연 폭보다 크게 잡아 textLength가 가로로 눌러준다 → 더 크고 더 좁게.
+ * viewBox는 캡하이트에 딱 맞춰져 있어 O의 베이스라인 오버슈트가 밖으로 나간다
+ * → overflow-visible 필수(없으면 O 밑이 평평하게 잘림).
  */
 function PosterWord({ children }: { children: ReactNode }) {
   return (
@@ -76,7 +71,7 @@ function PosterWord({ children }: { children: ReactNode }) {
       viewBox="0 0 1000 374"
       aria-hidden
       preserveAspectRatio="xMidYMid meet"
-      className="relative z-10 block w-full max-h-[24vh]"
+      className="relative z-10 block w-full max-h-[24vh] overflow-visible"
     >
       <text
         x="0"
@@ -143,18 +138,11 @@ function Ticket({ className = '' }: { className?: string }) {
 
 export default function HomePage() {
   const router = useRouter();
-  const [visible, setVisible] = useState(false);
-
-  // 부드러운 fade-in
-  useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 60);
-    return () => clearTimeout(timer);
-  }, []);
+  const visible = useFadeIn();
 
   return (
-    <main
-      style={scaleStyle}
-      className={`relative mx-auto flex h-dvh w-full max-w-[820px] flex-col overflow-hidden px-[calc(var(--u)*5)] transition-all duration-700 ease-smooth ${
+    <PosterShell
+      className={`transition-all duration-700 ease-smooth ${
         visible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
       }`}
     >
@@ -168,13 +156,7 @@ export default function HomePage() {
       </svg>
 
       {/* 상단 라벨 */}
-      <header className="relative z-20 flex shrink-0 items-center gap-[calc(var(--u)*3)]">
-        <span className="rounded-full border border-forest/50 px-[calc(var(--u)*3)] py-[calc(var(--u)*1.3)] font-body text-[calc(var(--u)*2.3)] font-semibold tracking-[0.16em] text-forest">
-          WEDDING PHOTO BOOTH
-        </span>
-        <span className="h-[1.5px] flex-1 bg-forest/55" />
-        <span className="h-[calc(var(--u)*1.8)] w-[calc(var(--u)*1.8)] rounded-full bg-forest" />
-      </header>
+      <PosterHeader label="WEDDING PHOTO BOOTH" />
 
       {/* 포스터 본문 */}
       <section className="relative flex min-h-0 flex-1 flex-col justify-center">
@@ -183,18 +165,42 @@ export default function HomePage() {
         {/* 배경 장식 레이어 — 링 · 원 · 선 */}
         <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
           <span className="absolute left-[3%] top-[13%] aspect-square w-[40%] rounded-full border border-forest/50" />
-          <span className="absolute right-[9%] top-[6%] aspect-square w-[20%] rounded-full bg-forest" />
+          {/* 큰 그린 원 — 티켓 뒤로 깔리는 포인트(레퍼런스 포스터 참고) */}
+          <span className="absolute right-[24%] top-[11%] aspect-square w-[34%] rounded-full bg-forest" />
           <span className="absolute right-[4%] bottom-[14%] aspect-square w-[30%] rounded-full bg-forest/[0.13]" />
           <span className="absolute left-0 top-[31%] h-px w-[20%] bg-forest/45" />
-          <span className="absolute right-[2%] top-[8%] h-[13%] w-px bg-forest/40" />
           <span className="absolute bottom-[7%] left-[26%] aspect-square w-[1.8%] rounded-full bg-forest" />
         </div>
+
+        {/* 회전 텍스트 링 — 우측 상단 레이어 */}
+        <SpinRing className="absolute right-[1%] top-[1%] z-20 h-[calc(var(--u)*19)] w-[calc(var(--u)*19)]" />
 
         <PosterWord>PHOTO</PosterWord>
 
         {/* 중단 밴드 — 티켓 */}
         <div className="relative z-10 flex items-center justify-end py-[4vh]">
-          <SpinRing className="absolute left-[1%] top-1/2 z-20 h-[calc(var(--u)*19)] w-[calc(var(--u)*19)] -translate-y-1/2" />
+          {/* 이탤릭 세리프 태그라인 + 화살표 — 왼쪽 정렬 */}
+          <div className="absolute left-[2%] top-1/2 z-10 flex w-[32%] -translate-y-1/2 flex-col gap-[calc(var(--u)*1.2)]">
+            <p className="font-display text-[calc(var(--u)*3)] italic leading-[1.32] text-ink">
+              Timeless
+              <br />
+              moments for
+              <br />
+              your day
+            </p>
+            <svg
+              viewBox="0 0 60 10"
+              aria-hidden
+              className="w-[55%] self-end text-forest"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+            >
+              <path d="M1 5h55m0 0l-5.5-4M56 5l-5.5 4" />
+            </svg>
+          </div>
+
           <Ticket className="w-[47%] rotate-[-5deg]" />
         </div>
 
@@ -226,6 +232,6 @@ export default function HomePage() {
         시작하기
         <Sparkle className="h-[min(calc(var(--u)*4.4),24px)] w-[min(calc(var(--u)*4.4),24px)] text-bg" />
       </button>
-    </main>
+    </PosterShell>
   );
 }

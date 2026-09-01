@@ -15,6 +15,7 @@ const config: Config = {
         subtle: "var(--color-subtle)",
         overlay: "var(--color-overlay)",
         forest: "var(--color-forest)",
+        ink: "var(--color-ink)",
       },
       fontFamily: {
         display: "var(--font-display)",
