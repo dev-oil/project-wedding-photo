@@ -59,6 +59,19 @@ function applyGlow(
   ctx.restore();
 }
 
+/** 뽀얀 베일 — 화면 전체에 밝은 막을 씌워 블랙을 들어올림 (안개 낀 렌즈 느낌) */
+function applyVeil(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  intensity: number = 0.08,
+) {
+  ctx.save();
+  ctx.fillStyle = `rgba(255, 252, 248, ${intensity})`;
+  ctx.fillRect(0, 0, width, height);
+  ctx.restore();
+}
+
 export const FILTERS: Filter[] = [
   {
     id: 'none',
@@ -74,6 +87,16 @@ export const FILTERS: Filter[] = [
     id: 'sepia',
     label: '세피아',
     css: 'sepia(0.7) brightness(1.05) contrast(1.05)',
+  },
+  {
+    // 인스타 감성 헤이즈 — 채도 낮고 뽀샤시, 지문 묻은 렌즈처럼 부드럽게 번지는 톤
+    id: 'hazy',
+    label: '뽀야미',
+    css: 'saturate(0.78) brightness(1.1) contrast(0.9)',
+    postProcess: (ctx, w, h) => {
+      applyGlow(ctx, w, h, 0.28); // 강한 소프트포커스 — 하이라이트가 몽글하게 번짐
+      applyVeil(ctx, w, h, 0.09); // 웜톤 베일로 블랙 리프트
+    },
   },
   {
     id: 'film',
