@@ -1,6 +1,6 @@
 /**
  * 결과 화면
- * 합성된 4컷 이미지 미리보기 + 다운로드 / QR 전송 / 다시 찍기.
+ * 합성된 4컷 이미지 미리보기 + 자동 업로드된 QR / 다시 찍기.
  * 합성 이미지가 없으면(직접 URL 진입 등) /booth로 돌려보냅니다.
  *
  * 구성
@@ -13,7 +13,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { PosterShell, PosterHeader } from '@/components/layout/PosterShell';
 import { Button } from '@/components/ui/Button';
-import { DownloadButton } from '@/features/share/DownloadButton';
 import { QRCodeView } from '@/features/share/QRCodeView';
 import { useFadeIn } from '@/hooks/useFadeIn';
 import { useObjectUrl } from '@/hooks/useObjectUrl';
@@ -55,7 +54,6 @@ export default function ResultPage() {
         </div>
 
         <div className="flex w-[38%] max-w-[300px] shrink-0 flex-col gap-[calc(var(--u)*2.2)]">
-          <DownloadButton blob={composedImage} />
           <QRCodeView blob={composedImage} />
           <Button onClick={() => restart('/booth')} variant="secondary">
             다시 찍기

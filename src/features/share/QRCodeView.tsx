@@ -1,76 +1,71 @@
 /**
  * QR 코드 뷰
- * Supabase에 이미지를 업로드하고, public URL을 QR 코드로 보여줍니다.
- * 모달 안에서 큰 QR을 표시합니다.
+ * 결과 화면 진입 시 자동으로 업로드하고(모든 촬영본 보존),
+ * 24시간 유효한 다운로드 URL을 QR로 바로 표시합니다.
+ * 실패하면 재시도 버튼을 보여줍니다 — 자동 업로드가 유일한 저장 경로입니다.
  */
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { uploadPhoto } from '@/lib/supabase';
+import { uploadPhoto } from '@/lib/upload';
 import { Button } from '@/components/ui/Button';
-import { Modal } from '@/components/ui/Modal';
+import { useBoothStore } from '@/store/boothStore';
 
 type QRCodeViewProps = {
   blob: Blob;
 };
 
 export function QRCodeView({ blob }: QRCodeViewProps) {
+  const selectedFrame = useBoothStore((s) => s.selectedFrame);
   const [url, setUrl] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState(false);
+  const started = useRef(false); // StrictMode 이중 실행에 의한 중복 업로드 방지
 
-  const handleGenerate = useCallback(async () => {
-    setIsLoading(true);
+  const upload = useCallback(async () => {
     setError(null);
-
     try {
-      const publicUrl = await uploadPhoto(blob);
-      setUrl(publicUrl);
-      setShowModal(true);
+      setUrl(await uploadPhoto(blob, selectedFrame));
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : '업로드에 실패했습니다.',
-      );
-    } finally {
-      setIsLoading(false);
+      setError(err instanceof Error ? err.message : '업로드에 실패했습니다.');
     }
-  }, [blob]);
+  }, [blob, selectedFrame]);
+
+  useEffect(() => {
+    if (started.current) return;
+    started.current = true;
+    upload();
+  }, [upload]);
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center gap-3">
+        <p className="text-center font-body text-sm text-muted">{error}</p>
+        <Button onClick={upload} variant="secondary">
+          다시 시도
+        </Button>
+      </div>
+    );
+  }
+
+  if (!url) {
+    return (
+      <p className="text-center font-body text-sm text-muted">
+        QR 준비 중...
+      </p>
+    );
+  }
 
   return (
-    <>
-      <Button
-        onClick={handleGenerate}
-        variant="secondary"
-        disabled={isLoading}
-      >
-        {isLoading ? '업로드 중...' : 'QR로 받기'}
-      </Button>
-
-      {error && (
-        <p className="mt-2 text-center font-body text-sm text-muted">
-          {error}
-        </p>
-      )}
-
-      {url && (
-        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-          <div className="flex flex-col items-center gap-6 p-8">
-            <p className="font-display text-2xl tracking-tight text-fg">
-              QR 코드를 스캔하세요
-            </p>
-            <div className="rounded-2xl bg-bg p-6">
-              <QRCodeSVG value={url} size={280} level="M" />
-            </div>
-            <p className="max-w-xs text-center font-body text-sm text-muted">
-              휴대폰 카메라로 QR 코드를 스캔하면
-              <br />
-              사진을 바로 저장할 수 있습니다.
-            </p>
-          </div>
-        </Modal>
-      )}
-    </>
+    <div className="flex flex-col items-center gap-3">
+      <div className="rounded-2xl bg-bg p-4">
+        <QRCodeSVG value={url} size={180} level="M" />
+      </div>
+      <p className="text-center font-body text-sm text-muted">
+        QR을 스캔하면 사진이 저장됩니다
+        <br />
+        (링크는 24시간 동안 유효합니다)
+      </p>
+    </div>
   );
 }
