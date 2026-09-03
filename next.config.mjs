@@ -12,6 +12,11 @@ const withSerwist = withSerwistInit({
 });
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  // dev는 Turbopack으로 돌리기 위한 명시 (Serwist는 dev에서 비활성이라 무관).
+  // 프로덕션 빌드는 Serwist(webpack 플러그인) 때문에 `next build --webpack` 사용 —
+  // Serwist가 Turbopack을 정식 지원하면 플래그 제거.
+  turbopack: {},
+};
 
 export default withSerwist(nextConfig);
