@@ -12,8 +12,7 @@ import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { PosterShell, PosterHeader } from '@/components/layout/PosterShell';
 import { useFadeIn } from '@/hooks/useFadeIn';
-
-const coupleNames = process.env.NEXT_PUBLIC_COUPLE_NAMES ?? '신랑 ♥ 신부';
+import { COUPLE_NAMES } from '@/lib/couple';
 
 /** 4각 별 — 포스터 곳곳의 포인트 마크 */
 function Sparkle({ className = '' }: { className?: string }) {
@@ -160,7 +159,7 @@ export default function HomePage() {
 
       {/* 포스터 본문 */}
       <section className="relative flex min-h-0 flex-1 flex-col justify-center">
-        <h1 className="sr-only">{coupleNames} 웨딩 포토부스</h1>
+        <h1 className="sr-only">{COUPLE_NAMES} 웨딩 포토부스</h1>
 
         {/* 배경 장식 레이어 — 링 · 원 · 선 */}
         <div aria-hidden className="pointer-events-none absolute inset-0 z-0">

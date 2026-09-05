@@ -4,12 +4,11 @@
  */
 import type { Metadata, Viewport } from 'next';
 import { InstallPrompt } from '@/features/pwa/InstallPrompt';
+import { COUPLE_NAMES } from '@/lib/couple';
 import '@/styles/globals.css';
 
-const coupleNames = process.env.NEXT_PUBLIC_COUPLE_NAMES ?? '신랑 ♥ 신부';
-
 export const metadata: Metadata = {
-  title: `${coupleNames} Wedding Photo Booth`,
+  title: `${COUPLE_NAMES} Wedding Photo Booth`,
   description: '결혼식 인생네컷 포토부스',
   manifest: '/manifest.json',
   appleWebApp: {

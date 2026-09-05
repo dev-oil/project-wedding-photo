@@ -14,7 +14,8 @@ pnpm install
 
 # 환경변수 설정
 cp .env.example .env.local
-# .env.local 파일을 열어 Supabase 정보와 커플 정보를 입력하세요
+# .env.local 파일을 열어 Supabase 정보를 입력하세요
+# (커플 이름·날짜는 환경변수가 아니라 src/lib/couple.ts에 있습니다)
 
 # 개발 서버
 pnpm dev
@@ -25,25 +26,49 @@ pnpm build && pnpm start
 
 ## 환경변수
 
-| 변수 | 설명 | 예시 |
-|------|------|------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase 프로젝트 URL | `https://abc.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase 익명 키 | `eyJ...` |
-| `NEXT_PUBLIC_COUPLE_NAMES` | 커플 이름 (타이틀 표시) | `민수 ♥ 지연` |
-| `NEXT_PUBLIC_WEDDING_DATE` | 결혼식 날짜 | `2026.05.20` |
+업로드는 전부 서버(`/api/photos`)에서 처리하므로 브라우저로 나가는 키가 없습니다.
+그래서 `NEXT_PUBLIC_` 접두사가 붙은 변수는 목 카메라 스위치 하나뿐입니다.
+
+| 변수 | 설명 | 어디에 |
+|------|------|--------|
+| `SUPABASE_URL` | Supabase 프로젝트 URL | 로컬 + Vercel |
+| `SUPABASE_SECRET_KEY` | service_role 키 — **서버 전용, 절대 공개 금지** | 로컬 + Vercel |
+| `BOOTH_KEY` | 사이트 잠금 비밀번호. 비워두면 잠기지 않음 | Vercel만 |
+| `NEXT_PUBLIC_MOCK_CAMERA` | `true`면 카메라 대신 목업 영상 | 로컬만 |
+
+`BOOTH_KEY`를 로컬에 넣으면 개발 중에도 잠깁니다.
+`NEXT_PUBLIC_MOCK_CAMERA`를 Vercel에 넣으면 행사장에서 목업 영상이 뜹니다.
+
+커플 이름과 날짜는 화면에 그대로 찍히는 값이라 환경변수가 아니라
+`src/lib/couple.ts` 상수로 둡니다. 바꾸려면 파일을 고치고 다시 배포하세요.
 
 ## Supabase 설정 가이드
 
 ### 1. Storage 버킷 생성
 1. Supabase 대시보드 → Storage → New bucket
-2. 이름: `photos`, Public bucket: **ON**
+2. 이름: `photos`, Public bucket: **OFF** (비공개)
 
-### 2. Storage 정책 설정
-1. `photos` 버킷 → Policies → New policy
-2. **Upload**: Allow INSERT for all users (`anon` role)
-3. **Read**: Allow SELECT for all users (`anon` role)
+버킷을 비공개로 두고, 촬영이 끝나면 서버가 24시간짜리 signed URL을
+만들어 QR에 담습니다. 링크를 모르면 아무도 사진을 볼 수 없습니다.
 
-### 3. 자동 삭제 (선택)
+### 2. 정책 설정
+따로 없습니다. 서버가 service_role 키로 접근하므로 RLS를 우회합니다.
+`anon` 역할에는 어떤 권한도 주지 마세요 — 주는 순간 버킷이 열립니다.
+
+### 3. 통계 테이블 생성 (선택)
+프레임별 사용 횟수를 남깁니다. 없어도 촬영·QR은 정상 동작합니다.
+
+```sql
+create table photos (
+  id          bigint generated always as identity primary key,
+  storage_path text not null,
+  frame_type   text,
+  created_at   timestamptz not null default now()
+);
+alter table photos enable row level security; -- 정책 없음 = 서버만 접근
+```
+
+### 4. 자동 삭제 (선택)
 Supabase는 현재 기본 lifecycle rules를 제공하지 않으므로,
 Edge Function이나 cron job으로 24시간 이전 파일을 주기적으로 삭제하세요.
 
@@ -108,9 +133,9 @@ AND created_at < NOW() - INTERVAL '24 hours';
 ## 기술 스택
 
 - Node.js 24 (LTS) + pnpm
-- Next.js 14 (App Router) + TypeScript
+- Next.js 16 (App Router) + React 19 + TypeScript
 - Tailwind CSS (CSS 변수 기반 토큰)
 - Zustand (상태 관리)
-- Supabase Storage (이미지 업로드)
+- Supabase Storage (비공개 버킷 + signed URL)
 - qrcode.react (QR 생성)
 - Serwist (PWA 서비스 워커 — `src/app/sw.ts`)

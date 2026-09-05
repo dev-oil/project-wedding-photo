@@ -12,7 +12,7 @@ const BUCKET = 'photos';
 const SIGNED_URL_TTL = 60 * 60 * 24; // 24시간
 
 export async function POST(req: Request) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SECRET_KEY;
   if (!url || !key) {
     return NextResponse.json(
