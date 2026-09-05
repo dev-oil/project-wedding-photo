@@ -69,5 +69,11 @@ export function proxy(req: NextRequest) {
   return lockPage(supplied !== null);
 }
 
-// 정적 리소스는 잠그지 않는다
-export const config = { matcher: ['/((?!_next|favicon.ico).*)'] };
+// 정적 리소스는 잠그지 않는다.
+// PWA 설치 자산(manifest·아이콘·서비스워커)도 제외 — 잠금 화면이 401 HTML을
+// 돌려주면 브라우저가 manifest를 못 읽어 '앱 설치'가 아예 뜨지 않는다.
+export const config = {
+  matcher: [
+    '/((?!_next|favicon.ico|manifest.json|sw.js|workbox-|icon-|apple-touch-icon).*)',
+  ],
+};

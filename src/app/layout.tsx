@@ -3,6 +3,7 @@
  * Google Fonts, PWA 메타, 전역 스타일을 설정합니다.
  */
 import type { Metadata, Viewport } from 'next';
+import { InstallPrompt } from '@/features/pwa/InstallPrompt';
 import '@/styles/globals.css';
 
 const coupleNames = process.env.NEXT_PUBLIC_COUPLE_NAMES ?? '신랑 ♥ 신부';
@@ -24,6 +25,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
+  themeColor: '#f2f5ea',
 };
 
 export default function RootLayout({
@@ -53,9 +55,12 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
         />
         {/* PWA 아이콘 */}
-        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body className="font-body">{children}</body>
+      <body className="font-body">
+        <InstallPrompt />
+        {children}
+      </body>
     </html>
   );
 }
