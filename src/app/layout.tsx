@@ -69,6 +69,13 @@ export default function RootLayout({
         />
         {/* PWA 아이콘 */}
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        {/*
+          Metadata의 appleWebApp.capable로는 이 태그가 안 나온다 —
+          Next 16은 표준 mobile-web-app-capable만 내보내는데(next/dist/lib/
+          metadata/metadata.js), iOS Safari는 그 이름을 인식하지 않는다.
+          없으면 홈 화면 앱이 주소창 있는 브라우저 뷰로 뜰 수 있어 직접 넣는다.
+        */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>
       <body className="font-body">
         <InstallPrompt />

@@ -73,8 +73,16 @@ function needsIosHint(): boolean {
   // 터치 포인트로 진짜 맥과 구분한다 — 이게 없으면 아이패드에서 안내가 안 뜬다.
   const iPadOS = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
   const iOS = /iPad|iPhone|iPod/.test(ua) || iPadOS;
-  // iOS의 Chrome/Firefox/Edge는 '홈 화면에 추가'가 없어 안내 대상이 아니다
-  return iOS && !/CriOS|FxiOS|EdgiOS/.test(ua);
+  if (!iOS) return false;
+
+  // '홈 화면에 추가'는 진짜 Safari에만 있다. 블랙리스트로는 끝이 없어서
+  // (카톡으로 링크를 돌리는 게 기본 시나리오다) 화이트리스트로 뒤집는다.
+  // 인앱 브라우저는 WKWebView라 Version/·Safari/ 토큰이 없다.
+  const realSafari = /Version\/\d/.test(ua) && /Safari/.test(ua);
+  const otherBrowser =
+    /CriOS|FxiOS|EdgiOS|OPT\/|KAKAOTALK|NAVER|Whale|FBAN|FBAV|Instagram|Line\/|DaumApps/i.test(ua);
+
+  return realSafari && !otherBrowser;
 }
 
 export function InstallPrompt() {

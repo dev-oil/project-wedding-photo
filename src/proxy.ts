@@ -10,12 +10,24 @@ import { NextResponse, type NextRequest } from 'next/server';
 const COOKIE = 'booth_key';
 
 function lockPage(wrongKey: boolean): NextResponse {
+  // 잠금 화면에도 PWA 메타를 그대로 싣는다.
+  // iOS는 '홈 화면에 추가' 하는 순간의 메타를 캡처해 영구 고정한다. 여기에
+  // manifest·아이콘·앱 이름이 없으면, 부스 기기를 세팅하다 잠금 화면에서
+  // 추가해버렸을 때 이름이 '잠김'인 주소창 달린 앱이 만들어지고 나중에
+  // 비밀번호를 풀어도 고쳐지지 않는다(삭제 후 재설치해야 한다).
+  // 참조하는 자산은 전부 아래 matcher 밖이라 401 상태에서도 정상 로드된다.
   const html = `<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>잠김</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Photo Booth</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Photo Booth">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#f2f5ea">
 <style>
   body { margin: 0; display: flex; min-height: 100vh; align-items: center;
     justify-content: center; background: #f2f5ea; font-family: sans-serif; }
@@ -72,8 +84,12 @@ export function proxy(req: NextRequest) {
 // 정적 리소스는 잠그지 않는다.
 // PWA 설치 자산(manifest·아이콘·서비스워커)도 제외 — 잠금 화면이 401 HTML을
 // 돌려주면 브라우저가 manifest를 못 읽어 '앱 설치'가 아예 뜨지 않는다.
+//
+// 예외는 파일명 하나하나를 $로 닫고 점도 이스케이프한다. 접두사로 열어두면
+// /icon-무엇이든, /sw.json 까지 통째로 무인증이 되고, 나중에 public/에
+// icon- 으로 시작하는 파일을 하나 넣는 순간 조용히 공개된다.
 export const config = {
   matcher: [
-    '/((?!_next|favicon.ico|manifest.json|sw.js|workbox-|icon-|apple-touch-icon).*)',
+    '/((?!_next/|favicon\\.ico$|manifest\\.json$|sw\\.js$|icon-(?:192|512)\\.png$|apple-touch-icon\\.png$).*)',
   ],
 };
