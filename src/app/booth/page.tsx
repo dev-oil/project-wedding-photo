@@ -11,7 +11,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { PosterShell, PosterHeader } from '@/components/layout/PosterShell';
 import { Button } from '@/components/ui/Button';
 import { CameraPreview } from '@/features/camera/CameraPreview';
@@ -37,6 +37,22 @@ export default function BoothPage() {
     capture(filter.css),
   );
 
+  /**
+   * 이번 마운트에서 실제로 촬영을 시작했는지.
+   *
+   * 스토어는 페이지 이동으로 초기화되지 않는다. 결과 화면에서 '처음으로'를
+   * 누르고 다시 들어오면 step이 'done', photos가 4장인 채로 마운트되는데,
+   * 아래 reset()은 다음 렌더에나 반영되므로 같은 커밋의 합성 effect가
+   * 잔여 상태를 보고 곧장 /result로 튕겨버린다(= 완료 화면으로 되돌아감).
+   * 이 플래그로 이번 마운트의 촬영만 합성하도록 막는다.
+   */
+  const shotThisMount = useRef(false);
+
+  const beginShooting = useCallback(() => {
+    shotThisMount.current = true;
+    start();
+  }, [start]);
+
   // 페이지 진입 시 이전 세션 상태 초기화
   useEffect(() => {
     reset();
@@ -49,6 +65,7 @@ export default function BoothPage() {
 
   // 4컷 완료 → 합성 → /result 이동
   useEffect(() => {
+    if (!shotThisMount.current) return; // 이전 세션의 잔여 'done' 상태 무시
     if (step !== 'done' || photos.length < TOTAL_SHOTS) return;
 
     async function compose() {
@@ -132,7 +149,7 @@ export default function BoothPage() {
             <FilterSelector selected={selectedFilter} onSelect={setFilter} />
           </div>
           <button
-            onClick={start}
+            onClick={beginShooting}
             disabled={!isReady}
             className="mt-[calc(var(--u)*1)] flex h-[min(calc(var(--u)*14),76px)] items-center justify-center rounded-[14px] bg-forest font-body text-[min(calc(var(--u)*4),24px)] font-semibold tracking-[0.02em] text-bg transition-transform duration-300 ease-smooth active:scale-[0.985] disabled:pointer-events-none disabled:opacity-40"
           >

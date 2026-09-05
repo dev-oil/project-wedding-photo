@@ -30,7 +30,9 @@ export function Button({
   return (
     <button
       className={`
-        min-h-[56px] rounded-[14px] px-8 py-3 font-body text-base font-semibold
+        min-h-[clamp(44px,calc(var(--u)*9.5),56px)] rounded-[14px]
+        px-[clamp(16px,calc(var(--u)*5.5),32px)] py-[clamp(8px,calc(var(--u)*2),12px)]
+        font-body text-[clamp(12px,calc(var(--u)*2.7),16px)] font-semibold
         transition-all duration-300 ease-smooth
         disabled:pointer-events-none disabled:opacity-40
         ${variantStyles[variant]}
