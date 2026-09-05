@@ -48,7 +48,7 @@ pnpm build && pnpm start
 1. Supabase 대시보드 → Storage → New bucket
 2. 이름: `photos`, Public bucket: **OFF** (비공개)
 
-버킷을 비공개로 두고, 촬영이 끝나면 서버가 24시간짜리 signed URL을
+버킷을 비공개로 두고, 촬영이 끝나면 서버가 7일짜리 signed URL을
 만들어 QR에 담습니다. 링크를 모르면 아무도 사진을 볼 수 없습니다.
 
 ### 2. 정책 설정
@@ -68,15 +68,20 @@ create table photos (
 alter table photos enable row level security; -- 정책 없음 = 서버만 접근
 ```
 
-### 4. 자동 삭제 (선택)
-Supabase는 현재 기본 lifecycle rules를 제공하지 않으므로,
-Edge Function이나 cron job으로 24시간 이전 파일을 주기적으로 삭제하세요.
+### 4. 사진 보관
+
+**자동 삭제는 설정되어 있지 않습니다.** 사진은 직접 지우기 전까지 버킷에
+영구히 남습니다 — 의도된 동작입니다(촬영본은 모두 보존).
+
+signed URL의 7일 만료는 *링크*가 열리는 기간일 뿐, 파일 수명이 아닙니다.
+
+행사가 끝나고 정리하실 때만 아래처럼 지우세요. **되돌릴 수 없으니**
+먼저 `scripts/download-photos.mjs`로 내려받아 두시길 권합니다.
 
 ```sql
--- 예시: 24시간 이전 파일 삭제 (SQL Editor에서 실행)
-DELETE FROM storage.objects
-WHERE bucket_id = 'photos'
-AND created_at < NOW() - INTERVAL '24 hours';
+-- 주의: 영구 삭제. 반드시 백업 후 실행할 것.
+-- delete from storage.objects
+-- where bucket_id = 'photos' and created_at < '2026-11-08';
 ```
 
 ## iPad PWA 설치

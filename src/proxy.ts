@@ -90,6 +90,9 @@ export function proxy(req: NextRequest) {
 // icon- 으로 시작하는 파일을 하나 넣는 순간 조용히 공개된다.
 export const config = {
   matcher: [
-    '/((?!_next/|favicon\\.ico$|manifest\\.json$|sw\\.js$|icon-(?:192|512)\\.png$|apple-touch-icon\\.png$).*)',
+    // api/keepalive는 Vercel Cron이 부른다. 쿠키가 없어 잠금에 걸리면
+    // Supabase까지 요청이 못 가서 깨우기가 무의미해진다.
+    // 대신 라우트 자체가 CRON_SECRET으로 스스로를 보호한다.
+    '/((?!_next/|api/keepalive$|favicon\\.ico$|manifest\\.json$|sw\\.js$|icon-(?:192|512)\\.png$|apple-touch-icon\\.png$).*)',
   ],
 };

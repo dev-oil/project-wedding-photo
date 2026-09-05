@@ -1,7 +1,7 @@
 /**
  * 사진 업로드 API (서버 전용)
  * 합성 이미지를 private 버킷에 올리고, 프레임 통계를 남긴 뒤
- * 24시간 유효한 signed URL을 돌려줍니다.
+ * 7일 유효한 signed URL을 돌려줍니다.
  * service_role 키는 이 파일(서버)에서만 사용됩니다.
  */
 import { createClient } from '@supabase/supabase-js';
@@ -9,7 +9,10 @@ import { nanoid } from 'nanoid';
 import { NextResponse } from 'next/server';
 
 const BUCKET = 'photos';
-const SIGNED_URL_TTL = 60 * 60 * 24; // 24시간
+// QR 링크 수명. 24시간은 너무 빡빡했다 — 하객이 화면을 사진으로 찍어뒀다가
+// 다음날 스캔하면 이미 만료다. 파일 자체는 버킷에 계속 남고, 이 값은
+// 링크가 열리는 기간일 뿐이다. 버킷은 여전히 비공개.
+const SIGNED_URL_TTL = 60 * 60 * 24 * 7; // 7일
 
 export async function POST(req: Request) {
   const url = process.env.SUPABASE_URL;

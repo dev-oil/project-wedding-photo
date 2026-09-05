@@ -22,7 +22,7 @@ export function QRCodeView({ url }: { url: string }) {
       <p className="text-center font-body text-[clamp(11px,calc(var(--u)*1.8),13px)] leading-[1.5] text-muted">
         QR을 스캔하면 사진이 저장됩니다
         <br />
-        (링크는 24시간 동안 유효합니다)
+        (링크는 7일 동안 유효합니다)
       </p>
     </div>
   );

@@ -44,3 +44,6 @@ public/workbox-*.js.map
 # env
 .env
 .env.local
+
+# 내려받은 사진 (scripts/download-photos.mjs)
+/photos-download/
