@@ -5,13 +5,15 @@
  */
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useBoothStore } from '@/store/boothStore';
 
 export const TOTAL_SHOTS = 4;
 
 const FLASH_MS = 200;
 const NEXT_SHOT_DELAY_MS = 500;
+/** 프레임이 아직 없어 캡처가 비었을 때 같은 컷을 다시 시도하는 횟수 */
+const MAX_CAPTURE_RETRIES = 5;
 
 export function useShootingSession(captureShot: () => HTMLCanvasElement | null) {
   const { setStep, addPhoto } = useBoothStore();
@@ -19,10 +21,12 @@ export function useShootingSession(captureShot: () => HTMLCanvasElement | null) 
   const [shotIndex, setShotIndex] = useState(0);
   const [isCounting, setIsCounting] = useState(false);
   const [flashVisible, setFlashVisible] = useState(false);
+  const captureRetries = useRef(0);
 
   const start = useCallback(() => {
     setStep('shooting');
     setShotIndex(0);
+    captureRetries.current = 0;
     setIsCounting(true);
   }, [setStep]);
 
@@ -30,7 +34,17 @@ export function useShootingSession(captureShot: () => HTMLCanvasElement | null) 
     setIsCounting(false);
 
     const canvas = captureShot();
-    if (!canvas) return;
+    if (!canvas) {
+      // 아직 유효한 프레임이 없다. 그냥 return하면 isCounting이 false인 채로
+      // 멈춰 촬영이 통째로 죽는다. 컷을 버리지 않고 카운트다운부터 다시 한다
+      // — 찍은 컷은 모두 남긴다는 정책상 조용히 건너뛰면 안 된다.
+      if (captureRetries.current < MAX_CAPTURE_RETRIES) {
+        captureRetries.current += 1;
+        setTimeout(() => setIsCounting(true), NEXT_SHOT_DELAY_MS);
+      }
+      return;
+    }
+    captureRetries.current = 0;
     addPhoto(canvas);
 
     setFlashVisible(true);

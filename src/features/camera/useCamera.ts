@@ -19,6 +19,31 @@ const CAMERA_CONSTRAINTS: MediaStreamConstraints = {
   audio: false,
 };
 
+/** 디코딩된 프레임이 실제로 생길 때까지 기다린다 (최대 3초) */
+function waitForFirstFrame(video: HTMLVideoElement): Promise<void> {
+  const hasFrame = () =>
+    video.readyState >= video.HAVE_CURRENT_DATA && video.videoWidth > 0;
+
+  if (hasFrame()) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const done = () => {
+      video.removeEventListener('loadeddata', check);
+      video.removeEventListener('canplay', check);
+      clearTimeout(timer);
+      resolve();
+    };
+    const check = () => {
+      if (hasFrame()) done();
+    };
+    // 못 기다려도 진행은 시킨다 — capture()가 프레임을 다시 검사한다
+    const timer = setTimeout(done, 3000);
+
+    video.addEventListener('loadeddata', check);
+    video.addEventListener('canplay', check);
+  });
+}
+
 export function useCamera(): UseCameraReturn {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -50,10 +75,15 @@ export function useCamera(): UseCameraReturn {
         setStream(mediaStream);
 
         if (videoRef.current) {
-          videoRef.current.srcObject = mediaStream;
+          const video = videoRef.current;
+          video.srcObject = mediaStream;
           // iOS Safari: play()이 자동 실행 정책에 의해 거부될 수 있음
-          await videoRef.current.play().catch(() => {});
-          setIsReady(true);
+          await video.play().catch(() => {});
+          // play() 성공은 첫 프레임이 디코딩됐다는 뜻이 아니다. 특히 iOS에서
+          // 그렇다. 여기서 바로 준비 완료로 치면 프레임이 없는 상태로 캡처가
+          // 돌아 검은 사진이 저장된다(JPEG는 투명을 검정으로 굽는다).
+          await waitForFirstFrame(video);
+          if (!cancelled) setIsReady(true);
         }
       } catch (err) {
         if (cancelled) return;
@@ -94,6 +124,12 @@ export function useCamera(): UseCameraReturn {
     (filterCss: string): HTMLCanvasElement | null => {
       const video = videoRef.current;
       if (!video || !isReady) return null;
+
+      // 프레임이 없으면 캡처하지 않는다. videoWidth가 0이면 0×0 캔버스가
+      // 만들어지고, 프레임이 비어 있으면 검은 컷이 그대로 저장된다.
+      // null을 돌려주면 촬영 훅이 이 컷을 다시 찍는다.
+      if (video.readyState < video.HAVE_CURRENT_DATA) return null;
+      if (!video.videoWidth || !video.videoHeight) return null;
 
       const canvas = document.createElement('canvas');
       canvas.width = video.videoWidth;
