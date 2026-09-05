@@ -6,6 +6,7 @@
 'use client';
 
 import { useRef, useState, useCallback, useEffect } from 'react';
+import { applyCssFilter } from '@/lib/imageFilter';
 import type { UseCameraReturn } from '@/types';
 import { createMockStream, isMockCamera } from './mockCamera';
 
@@ -101,15 +102,16 @@ export function useCamera(): UseCameraReturn {
       const ctx = canvas.getContext('2d');
       if (!ctx) return null;
 
-      // CSS filter를 Canvas에 적용
-      if (filterCss && filterCss !== 'none') {
-        ctx.filter = filterCss;
-      }
-
       // 셀카 모드: 좌우 반전
       ctx.translate(canvas.width, 0);
       ctx.scale(-1, 1);
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // 필터는 그린 뒤 픽셀에 직접 적용한다.
+      // ctx.filter는 Safari 17부터라 구형 아이패드에서 조용히 무시되고,
+      // 그러면 프리뷰만 필터가 걸리고 최종 사진은 원본으로 나온다.
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      applyCssFilter(ctx, canvas.width, canvas.height, filterCss);
 
       return canvas;
     },

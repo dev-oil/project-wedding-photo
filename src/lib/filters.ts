@@ -44,18 +44,36 @@ function applyVignette(
   ctx.fillRect(0, 0, width, height);
 }
 
-/** 소프트 글로우 — 밝은 영역에 블러된 레이어를 lighter 블렌드로 합성 */
+/**
+ * 소프트 글로우 — 흐린 복사본을 lighter 블렌드로 덮어 하이라이트를 번지게 함.
+ *
+ * ctx.filter의 blur()를 쓰지 않고 축소→확대로 흐림을 만든다.
+ * ctx.filter는 Safari 17부터라 구형 아이패드에서 조용히 무시되는데,
+ * 그러면 블러 없는 원본이 그대로 덧대어져 그냥 밝아지기만 한다.
+ * 1/20로 줄였다가 되키우면 보간이 blur(20px)과 비슷한 흐림을 만든다.
+ */
+const GLOW_DOWNSCALE = 1 / 20;
+
 function applyGlow(
   ctx: CanvasRenderingContext2D,
   width: number,
   height: number,
   intensity: number = 0.15,
 ) {
+  const small = document.createElement('canvas');
+  small.width = Math.max(1, Math.round(width * GLOW_DOWNSCALE));
+  small.height = Math.max(1, Math.round(height * GLOW_DOWNSCALE));
+
+  const smallCtx = small.getContext('2d');
+  if (!smallCtx) return;
+  smallCtx.drawImage(ctx.canvas, 0, 0, small.width, small.height);
+
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
   ctx.globalAlpha = intensity;
-  ctx.filter = 'blur(20px) brightness(1.2)';
-  ctx.drawImage(ctx.canvas, 0, 0, width, height);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(small, 0, 0, width, height);
   ctx.restore();
 }
 
